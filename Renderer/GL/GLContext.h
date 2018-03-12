@@ -57,6 +57,14 @@ public:
   #define GetContext glXGetCurrentContext
 #endif
 
+    GLContext(GLXContext* _ctx, int iShareGroupID): Context(iShareGroupID) {
+      ctx = _ctx;
+      if (ctx) 
+        m_pState = std::shared_ptr<StateManager>(new GLStateManager());
+      else
+        m_pState = std::shared_ptr<StateManager>();
+    }
+
     GLContext(int iShareGroupID) : Context(iShareGroupID) {
       ctx = GetContext();
       if (ctx) 
@@ -75,6 +83,17 @@ public:
        if(contextMap.find(GetContext()) == contextMap.end()) {
          std::pair<const void*, std::shared_ptr<Context>> tmp(
             GetContext(),
+            std::shared_ptr<Context>(new GLContext(iShareGroupID))
+         );
+         return contextMap.insert(tmp).first->second; // return what we're inserting
+       }
+       return contextMap[GetContext()];
+    }
+
+    static std::shared_ptr<Context> Current(GLXContext* _ctx, int iShareGroupID) {
+       if(contextMap.find(GetContext()) == contextMap.end()) {
+         std::pair<const void*, std::shared_ptr<Context>> tmp(
+            _ctx,
             std::shared_ptr<Context>(new GLContext(iShareGroupID))
          );
          return contextMap.insert(tmp).first->second; // return what we're inserting

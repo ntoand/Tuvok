@@ -16,6 +16,10 @@ find_package(OpenMP QUIET)
 find_package(Qt5OpenGL REQUIRED QUIET)
 find_package(ZLIB REQUIRED QUIET)
 
+include_directories(
+  /usr/local/glew/1.13.0/include
+)
+
 # Expressions library
 BISON_TARGET(Parser IO/expressions/tvk-parse.ypp ${PROJECT_BINARY_DIR}/tvk-parse.cpp)
 FLEX_TARGET(Scanner IO/expressions/tvk-scan.lpp ${PROJECT_BINARY_DIR}/tvk-scan.cpp)
