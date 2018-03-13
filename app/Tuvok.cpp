@@ -6,7 +6,7 @@
 using namespace std;
 using namespace tuvok;
 
-Tuvok::Tuvok(): mInitialized(false), mCapture(false)
+Tuvok::Tuvok(): mInitialized(false), mCapture(false), mUpdate(true)
 {
 
 }
@@ -25,19 +25,22 @@ void Tuvok::init(int width, int height) {
 	if(mInitialized)
 		return;
 
-	string uvf_file = "c60.uvf";
+	string uvf_file = "data/foot_tiffs_2048_3.uvf";
 
 	std::shared_ptr<LuaScripting> ss = Controller::Instance().LuaScript();
     mLuaAbstrRenderer = ss->cexecRet<LuaClassInstance>(
         "tuvok.renderer.new",
+        //MasterController::OPENGL_SBVR, false, false, false, false);
         MasterController::OPENGL_RAYCASTER, false, false, false, false);
 	mRenderer = mLuaAbstrRenderer.getRawPointer<AbstrRenderer>(ss);
 
     ss->cexec(mLuaAbstrRenderer.fqName() + ".loadDataset", uvf_file);
-    ss->cexec(mLuaAbstrRenderer.fqName() + ".addShaderPath", "../../Shaders");
+    ss->cexec(mLuaAbstrRenderer.fqName() + ".addShaderPath", "Shaders");
     ss->cexec(mLuaAbstrRenderer.fqName() + ".initialize", GLContext::Current(0));
     ss->cexec(mLuaAbstrRenderer.fqName() + ".resize", UINTVECTOR2(width, height));
-    ss->cexec(mLuaAbstrRenderer.fqName() + ".setRendererTarget",AbstrRenderer::RT_INTERACTIVE);    
+    ss->cexec(mLuaAbstrRenderer.fqName() + ".setRendererTarget",AbstrRenderer::RT_INTERACTIVE); 
+    ss->cexec(mLuaAbstrRenderer.fqName() + ".setStereoEnabled",false);  
+
     //ss->cexec(mLuaAbstrRenderer.fqName() + ".paint");
 
     ss->cexec(mLuaAbstrRenderer.fqName() + ".setConsiderPrevDepthBuffer", false);
@@ -58,7 +61,11 @@ void Tuvok::render(const float MV[16], const float P[16]) {
 	//ss->cexec(mLuaAbstrRenderer.fqName() + ".setViewDir", FLOATVECTOR3(dir[0], dir[1], dir[2]));
 	FLOATMATRIX4 mv_mat = FLOATMATRIX4(MV);
 	FLOATMATRIX4 p_mat = FLOATMATRIX4(P);
-	ss->cexec(mLuaAbstrRenderer.fqName() + ".setUserMatrices", mv_mat, p_mat, mv_mat, p_mat, mv_mat, p_mat);
+	if(mUpdate) {
+		ss->cexec(mLuaAbstrRenderer.fqName() + ".setUserMatrices", mv_mat, p_mat, mv_mat, p_mat, mv_mat, p_mat);
+		mUpdate = false;	
+	}
+	//ss->cexec(mLuaAbstrRenderer.fqName() + ".scheduleCompleteRedraw");
 	ss->cexec(mLuaAbstrRenderer.fqName() + ".paint");
 	
 	if(mCapture) {

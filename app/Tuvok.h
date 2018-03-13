@@ -30,6 +30,7 @@ private:
 	bool mInitialized;
 	AbstrRenderer* ren;
 	bool mCapture;
+	bool mUpdate;
 
 	LuaClassInstance mLuaAbstrRenderer;
 	AbstrRenderer*   mRenderer;

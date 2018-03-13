@@ -7,10 +7,11 @@ SET(MODULE_NAME tuvokview)
 include_directories(${OMEGA_INCLUDE_DIRS})
 
 include_directories(
-	/gpfs/M2Home/toand/Monash063/toand/git/Tuvok/install/include
+	/home/toand/git/Tuvok
+	/home/toand/git/Tuvok/install/include/Tuvok
 )
 link_directories( 
-	/gpfs/M2Home/toand/Monash063/toand/git/Tuvok/install/lib
+	/home/toand/git/Tuvok//install/lib
 )
 
 # Set module name and source files here

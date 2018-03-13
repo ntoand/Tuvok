@@ -63,12 +63,12 @@ public:
 
     	    if(module->visible)
     	    { 
-                if(tv) {
-                    tv->init(context.viewport.width(), context.viewport.height());
+                if(module->tv) {
+                    module->tv->init(context.viewport.width(), context.viewport.height());
 
                     float* MV = context.modelview.cast<float>().data();
                     float* P = context.projection.cast<float>().data();
-                    tv->render(MV, P);
+                    module->tv->render(MV, P);
                 }
     			
     		    if(oglError) return;
@@ -103,19 +103,11 @@ TovokViewRenderModule* initialize()
 ///////////////////////////////////////////////////////////////////////////////
 // Python API
 #include "omega/PythonInterpreterWrapper.h"
-BOOST_PYTHON_MODULE(gigapoint)
+BOOST_PYTHON_MODULE(tuvokview)
 {
     //
     PYAPI_REF_BASE_CLASS(TovokViewRenderModule)
-    PYAPI_METHOD(TovokViewRenderModule, initPotree)
-    PYAPI_METHOD(TovokViewRenderModule, updateMaterial)
-    PYAPI_METHOD(TovokViewRenderModule, updateQuality)
-    PYAPI_METHOD(TovokViewRenderModule, updateSizeType)
-    PYAPI_METHOD(TovokViewRenderModule, updatePointScale)
-    PYAPI_METHOD(TovokViewRenderModule, updateVisible)
-    PYAPI_METHOD(TovokViewRenderModule, printInfo)
-    PYAPI_METHOD(TovokViewRenderModule, updateFilter)
-    PYAPI_METHOD(TovokViewRenderModule, updateEdl)
+    PYAPI_METHOD(TovokViewRenderModule, initTuvok)
     ;
 
     def("initialize", initialize, PYAPI_RETURN_REF);
