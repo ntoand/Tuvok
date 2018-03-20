@@ -32,9 +32,21 @@ public:
             delete tv;
     }
 
-    void initTuvok()
+    void initTuvok(string filename, bool stereo)
     {
-        tv = new Tuvok();
+        tv = new Tuvok(filename, stereo);
+    }
+
+    void setCamThreshold(const float val)
+    {
+        if(tv)
+            tv->setCamThreshold(val);
+    }
+
+    void swapEye()
+    {
+        if(tv)
+            tv->swapEye();
     }
 
     Tuvok* tv;
@@ -58,7 +70,8 @@ public:
     {
     	if(context.task == DrawContext::SceneDrawTask)
         {
-            glPushAttrib(GL_TEXTURE_BIT | GL_ENABLE_BIT | GL_CURRENT_BIT);
+            glPushAttrib(GL_TEXTURE_BIT | GL_ENABLE_BIT | GL_CURRENT_BIT );
+                // | GL_PROJECTION | GL_MODELVIEW);
             client->getRenderer()->beginDraw3D(context);
 
     	    if(module->visible)
@@ -66,9 +79,37 @@ public:
                 if(module->tv) {
                     module->tv->init(context.viewport.width(), context.viewport.height());
 
-                    float* MV = context.modelview.cast<float>().data();
-                    float* P = context.projection.cast<float>().data();
-                    module->tv->render(MV, P);
+                    Camera* cam = context.camera;
+
+                    // camera pos
+                    Vector3f cp = context.camera->getPosition();
+                    float campos[3] = {cp[0], cp[1], cp[2]};
+
+                    if(module->tv->isStereo()) {
+                        // calculate view and projection matrices for left eye
+                        DrawContext tmp = context;
+                        tmp.eye = DrawContext::EyeLeft;
+                        tmp.updateTransforms(cam->getHeadTransform(), cam->getViewTransform(), 
+                            cam->getEyeSeparation(), cam->getNearZ(), cam->getFarZ());
+                        float* MVLeft = tmp.modelview.cast<float>().data();
+                        float* PLeft = tmp.projection.cast<float>().data();
+
+                        // calculate view and projection matrices for right eye
+                        DrawContext tmp2 = context;
+                        tmp2.eye = DrawContext::EyeRight;
+                        tmp2.updateTransforms(cam->getHeadTransform(), cam->getViewTransform(), 
+                            cam->getEyeSeparation(), cam->getNearZ(), cam->getFarZ());
+                        float* MVRight = tmp2.modelview.cast<float>().data();
+                        float* PRight = tmp2.projection.cast<float>().data();
+
+                        module->tv->render(MVLeft, PLeft, MVRight, PRight, campos);
+                    }
+                    else {
+                        float* MV = context.modelview.cast<float>().data();
+                        float* P = context.projection.cast<float>().data();
+                        module->tv->render(MV, P, MV, P, campos);
+                    }
+
                 }
     			
     		    if(oglError) return;
@@ -108,6 +149,8 @@ BOOST_PYTHON_MODULE(tuvokview)
     //
     PYAPI_REF_BASE_CLASS(TovokViewRenderModule)
     PYAPI_METHOD(TovokViewRenderModule, initTuvok)
+    PYAPI_METHOD(TovokViewRenderModule, setCamThreshold)
+    PYAPI_METHOD(TovokViewRenderModule, swapEye)
     ;
 
     def("initialize", initialize, PYAPI_RETURN_REF);

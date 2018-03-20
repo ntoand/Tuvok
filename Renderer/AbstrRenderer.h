@@ -744,6 +744,8 @@ class AbstrRenderer {
     uint64_t            m_iStartLODOffset;
     size_t              m_iTimestep;
     CullingLOD          m_FrustumCullingLOD;
+    //toand
+    CullingLOD          m_FrustumCullingLOD2;
     bool                m_bClearFramebuffer;
     bool                m_bConsiderPreviousDepthbuffer;
     uint64_t            m_iCurrentLOD;

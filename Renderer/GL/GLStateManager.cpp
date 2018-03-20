@@ -228,6 +228,9 @@ void GLStateManager::GetFromOpenGL()
   m_InternalState.lineWidth = f;
 
   GL_CHECK();
+
+  //ntoand
+  m_OriginalState = m_InternalState;
 }
 
 void GLStateManager::SetEnableDepthTest(const bool& value, bool bForce) {

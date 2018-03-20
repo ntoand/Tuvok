@@ -663,6 +663,10 @@ bool GLRenderer::Paint() {
   // reset render states
   m_bFirstDrawAfterResize = false;
   m_bFirstDrawAfterModeChange = false;
+
+  //ntoand
+  m_pContext->GetStateManager()->RestoreState();
+
   return true;
 }
 
@@ -768,7 +772,7 @@ void GLRenderer::EndFrame(const vector<char>& justCompletedRegions) {
       // in stereo compose both images into one, in mono mode simply swap the
       // pointers
       if (m_bDoStereoRendering) {
-         m_pContext->GetStateManager()->Apply(m_BaseState);
+        m_pContext->GetStateManager()->Apply(m_BaseState);
 
         if (m_bStereoEyeSwap) {
           m_pFBO3DImageNext[0]->Read(1);
@@ -779,6 +783,7 @@ void GLRenderer::EndFrame(const vector<char>& justCompletedRegions) {
         }
 
         m_TargetBinder.Bind(m_pFBO3DImageLast);
+        glViewport(0, 0, m_vWinSize.x, m_vWinSize.y);
         glClear(GL_COLOR_BUFFER_BIT);
 
         switch (m_eStereoMode) {
@@ -802,13 +807,23 @@ void GLRenderer::EndFrame(const vector<char>& justCompletedRegions) {
                     break;
         }
 
-        m_pContext->GetStateManager()->SetEnableDepthTest(false);
+	      //toand
+        //m_pContext->GetStateManager()->SetEnableDepthTest(false);
+        GPUState localState = m_BaseState;
+        localState.enableBlend = false;
+        localState.depthFunc = DF_ALWAYS; //DF_LEQUAL;
+        //localState.enableScissor = true;
+        m_pContext->GetStateManager()->Apply(localState);
+
         FullscreenQuadRegions();
 
         m_TargetBinder.Unbind();
 
         m_pFBO3DImageNext[0]->FinishRead();
         m_pFBO3DImageNext[1]->FinishRead();
+
+        //swap(m_pFBO3DImageLast, m_pFBO3DImageNext[1]);
+
       } else {
         swap(m_pFBO3DImageLast, m_pFBO3DImageNext[0]);
       }
@@ -822,7 +837,8 @@ void GLRenderer::EndFrame(const vector<char>& justCompletedRegions) {
       if (!renderRegions[0]->isBlank && renderRegions[0]->isTargetBlank) {
         TargetIsBlankButFrameIsNotFinished(renderRegions[0].get());
       }
-    }
+    } 
+
   } else {
     for (size_t i=0; i < renderRegions.size(); ++i) {
       if(justCompletedRegions[i]) {

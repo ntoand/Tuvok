@@ -1,6 +1,8 @@
 #ifndef __TUVOK__H
 #define __TUVOK__H
 
+//#include "FrameBuffer.h"
+
 #include <StdTuvokDefines.h>
 #include <Basics/SysTools.h>
 #include <Controller/Controller.h>
@@ -16,26 +18,36 @@
 
 using namespace tuvok;
 
+#include <string>
+
 class Tuvok {
 
 public:
-	Tuvok();
+	Tuvok(std::string filename, bool stereo=true);
 	~Tuvok();
 
 	void init(int width, int height);
-	void render(const float MV[16], const float P[16]);
-	void capture();
+	void loadDataset(std::string filename);
+	void render(const float MVLeft[16], const float PLeft[16], 
+				const float MVRight[16], const float PRight[16], const float campos[3]);
+
+	void setCamThreshold(float val) { mCamThreshold = val; }
+	bool isStereo() { return mStereo; }
+	void swapEye();
 
 private:
 	bool mInitialized;
-	AbstrRenderer* ren;
-	bool mCapture;
-	bool mUpdate;
+	std::string mFilename;
+	bool mStereo;
 
+	AbstrRenderer* ren;
 	LuaClassInstance mLuaAbstrRenderer;
 	AbstrRenderer*   mRenderer;
 
-
+	float mCamThreshold;
+	FLOATVECTOR3 mPrevCamPos;
+	unsigned int mPrevTime;
+	unsigned int mIdleTime;
 };
 
 

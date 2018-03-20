@@ -167,8 +167,13 @@ namespace tuvok {
       virtual void SetBlendFunction(const BLEND_FUNC src, const BLEND_FUNC dest, bool bForce=false) = 0;
       virtual void SetLineWidth(const float value, bool bForce=false) = 0;
 
+      //ntoand
+      void RestoreState() { Apply(m_OriginalState); }
+
     protected:
        GPUState m_InternalState;
+       //ntoand
+       GPUState m_OriginalState;
   };
 
   typedef std::shared_ptr<StateManager> StateManagerPtr; 

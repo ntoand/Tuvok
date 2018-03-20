@@ -894,12 +894,14 @@ bool AbstrRenderer::RegionNeedsBrick(const RenderRegion& rr,
   b.vVoxelCount = bmd.n_voxels;
 
   // skip the brick if it is outside the current view frustum
-  if (!m_FrustumCullingLOD.IsVisible(b.vCenter, b.vExtension)) {
-    MESSAGE("Outside view frustum, skipping <%u,%u,%u>",
-            static_cast<unsigned>(std::get<0>(key)),
-            static_cast<unsigned>(std::get<1>(key)),
-            static_cast<unsigned>(std::get<2>(key)));
-    return false;
+  if (!m_FrustumCullingLOD.IsVisible(b.vCenter, b.vExtension) ){
+    if(m_bDoStereoRendering && !m_FrustumCullingLOD2.IsVisible(b.vCenter, b.vExtension)) {
+      MESSAGE("Outside view frustum, skipping <%u,%u,%u>",
+              static_cast<unsigned>(std::get<0>(key)),
+              static_cast<unsigned>(std::get<1>(key)),
+              static_cast<unsigned>(std::get<2>(key)));
+      return false;
+    }
   }
 
   // skip the brick if the clipping plane removes it.
@@ -1125,6 +1127,10 @@ FLOATVECTOR3 AbstrRenderer::LuaGetVolumeAABBExtents() const {
 void AbstrRenderer::PlanFrame(RenderRegion3D& region) {
   m_FrustumCullingLOD.SetViewMatrix(region.modelView[0]);
   m_FrustumCullingLOD.Update();
+  if(m_bDoStereoRendering) {
+    m_FrustumCullingLOD2.SetViewMatrix(region.modelView[1]);
+    m_FrustumCullingLOD2.Update();
+  }
 
   // let the mesh know about our current state, technically
   // SetVolumeAABB only needs to be called when the geometry of volume
@@ -1199,6 +1205,8 @@ void AbstrRenderer::PlanFrame(RenderRegion3D& region) {
         m_vLeftEyeBrickList =
           BuildLeftEyeSubFrameBrickList(region.modelView[1], m_vCurrentBrickList);
       }
+
+      //cout << "size: " << m_vCurrentBrickList.size() << " " << m_vLeftEyeBrickList.size() << endl << std::flush;
 
       m_iBricksRenderedInThisSubFrame = 0;
     }

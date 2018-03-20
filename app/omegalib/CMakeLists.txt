@@ -8,10 +8,10 @@ include_directories(${OMEGA_INCLUDE_DIRS})
 
 include_directories(
 	/home/toand/git/Tuvok
-	/home/toand/git/Tuvok/install/include/Tuvok
+	#/home/toand/git/Tuvok/install/include/Tuvok
 )
 link_directories( 
-	/home/toand/git/Tuvok//install/lib
+	/home/toand/git/Tuvok/build
 )
 
 # Set module name and source files here
