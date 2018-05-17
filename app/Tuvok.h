@@ -23,13 +23,14 @@ using namespace tuvok;
 class Tuvok {
 
 public:
-	Tuvok(std::string filename, bool stereo=true);
+	Tuvok(std::string filename, bool stereo=false);
 	~Tuvok();
 
 	void init(int width, int height);
 	void loadDataset(std::string filename);
 	void render(const float MVLeft[16], const float PLeft[16], 
-				const float MVRight[16], const float PRight[16], const float campos[3]);
+				const float MVRight[16], const float PRight[16], 
+				const float campos[3], bool alwayUpdate = false);
 
 	void setCamThreshold(float val) { mCamThreshold = val; }
 	bool isStereo() { return mStereo; }

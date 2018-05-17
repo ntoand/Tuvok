@@ -17,6 +17,7 @@ Tuvok::Tuvok(string filename, bool stereo): mInitialized(false), mPrevTime(0), m
 {
 	mPrevCamPos = FLOATVECTOR3(0, 0, 0);
 	mFilename = filename;
+	cout << "input file: " << filename << endl;
 }
 	
 Tuvok::~Tuvok()
@@ -37,7 +38,7 @@ void Tuvok::init(int width, int height) {
     mLuaAbstrRenderer = ss->cexecRet<LuaClassInstance>(
         "tuvok.renderer.new",
         //MasterController::OPENGL_SBVR, false, false, false, false);
-        MasterController::OPENGL_RAYCASTER, false, false, false, false);
+        MasterController::OPENGL_RAYCASTER_LAVA, false, false, false, false);
 	mRenderer = mLuaAbstrRenderer.getRawPointer<AbstrRenderer>(ss);
 
     ss->cexec(mLuaAbstrRenderer.fqName() + ".loadDataset", mFilename);
@@ -45,6 +46,9 @@ void Tuvok::init(int width, int height) {
     ss->cexec(mLuaAbstrRenderer.fqName() + ".initialize", GLContext::Current(0));
     ss->cexec(mLuaAbstrRenderer.fqName() + ".resize", UINTVECTOR2(width, height));
     ss->cexec(mLuaAbstrRenderer.fqName() + ".setRendererTarget",AbstrRenderer::RT_INTERACTIVE); 
+
+    ss->cexec(mLuaAbstrRenderer.fqName() + ".setCoordinateArrowsEnabled", true); 
+    
     if(mStereo) {
     	ss->cexec(mLuaAbstrRenderer.fqName() + ".setStereoEnabled",true);
     	ss->cexec(mLuaAbstrRenderer.fqName() + ".setStereoMode",AbstrRenderer::SM_SCANLINE);
@@ -64,25 +68,29 @@ void Tuvok::swapEye() {
 }
 
 void Tuvok::render(const float MVLeft[16], const float PLeft[16], 
-					const float MVRight[16], const float PRight[16], const float campos[3]) {
+					const float MVRight[16], const float PRight[16], 
+					const float campos[3], bool alwayUpdate) {
 
 	if(!mInitialized)
 		return;
 
 	bool lowmode = true;
-	FLOATVECTOR3 currCamPos = FLOATVECTOR3(campos[0], campos[1], campos[2]);
-	float len = (currCamPos - mPrevCamPos).sqLength();
-	//cout << len << " " << std::flush;
-	if(len > mCamThreshold || mPrevTime == 0) {
-		mPrevTime = getTime();
-		mIdleTime = 0;
+	FLOATVECTOR3 currCamPos;
+	if(!alwayUpdate) {
+		currCamPos = FLOATVECTOR3(campos[0], campos[1], campos[2]);
+		float len = (currCamPos - mPrevCamPos).sqLength();
+		//cout << len << " " << std::flush;
+		if(len > mCamThreshold || mPrevTime == 0) {
+			mPrevTime = getTime();
+			mIdleTime = 0;
+		}
+		else {
+			mIdleTime += getTime() - mPrevTime;
+			if(mIdleTime > 1000)
+				lowmode = false;
+		}
 	}
-	else {
-		mIdleTime += getTime() - mPrevTime;
-		if(mIdleTime > 1000)
-			lowmode = false;
-	}
-
+	
 	mPrevCamPos = currCamPos;
 
 	std::shared_ptr<LuaScripting> ss = Controller::Instance().LuaScript();

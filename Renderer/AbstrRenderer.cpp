@@ -168,7 +168,18 @@ AbstrRenderer::AbstrRenderer(MasterController* pMasterController,
   m_vLightDir(0.0f,0.0f,-1.0f),
   m_bDebugBricks(false),
   m_fIsovalue(0.5f),
-  m_fCVIsovalue(0.8f)
+  m_fCVIsovalue(0.8f),
+  m_lavaIsoValue(0.45), 
+  m_lavaIsoWalls(true),
+  m_lavaIsoAlpha(1),
+  m_lavaIsoSmooth(0.5045783843331688),
+  m_lavaIsoColor(1, 0.9626, 0.89),
+  m_lavaDensity(5),
+  m_lavaPower(1),
+  m_lavaDensityMin(0),
+  m_lavaDensityMax(1),
+  m_lavaBrightness(0),
+  m_lavaContrast(1)
 {
   m_vBackgroundColors[0] = FLOATVECTOR3(0,0,0);
   m_vBackgroundColors[1] = FLOATVECTOR3(0,0,0);
@@ -968,6 +979,14 @@ bool AbstrRenderer::ContainsData(const BrickKey& key) const
   // render mode dictates how we look at data ...
   switch (m_eRenderMode) {
     case RM_1DTRANS:
+      // ... in 1D we only care about the range of data in a brick
+      bContainsData = m_pDataset->ContainsData(
+                        key,
+                        double(m_p1DTrans->GetNonZeroLimits().x) * fRescaleFactor,
+                        double(m_p1DTrans->GetNonZeroLimits().y) * fRescaleFactor
+                      );
+      break;
+    case RM_1DTRANS_LAVA:
       // ... in 1D we only care about the range of data in a brick
       bContainsData = m_pDataset->ContainsData(
                         key,
@@ -1798,6 +1817,82 @@ void AbstrRenderer::SetRotation(const FLOATMATRIX4& rotation) {
   this->SetRotationRR(rr.get(), rotation);
 }
 
+// lava
+void AbstrRenderer::SetLavaIsoValue(float val) {
+  if (m_lavaIsoValue != val) {
+      m_lavaIsoValue = val;
+      ScheduleCompleteRedraw();
+  }
+}
+
+void AbstrRenderer::SetLavaIsoWalls(bool val) {
+  if (m_lavaIsoWalls != val) {
+      m_lavaIsoWalls = val;
+      ScheduleCompleteRedraw();
+  }
+}
+
+void AbstrRenderer::SetLavaIsoAlpha(float val) {
+  if (m_lavaIsoAlpha != val) {
+      m_lavaIsoAlpha = val;
+      ScheduleCompleteRedraw();
+  }
+}
+
+void AbstrRenderer::SetLavaIsoSmooth(float val) {
+  if (m_lavaIsoSmooth != val) {
+      m_lavaIsoSmooth = val;
+      ScheduleCompleteRedraw();
+  }
+}
+
+void AbstrRenderer::SetLavaIsoColor(FLOATVECTOR3 val) {
+  m_lavaIsoColor = val;
+  ScheduleCompleteRedraw();
+}
+
+void AbstrRenderer::SetLavaDensity(float val) {
+  if (m_lavaDensity != val) {
+      m_lavaDensity = val;
+      ScheduleCompleteRedraw();
+  }
+}
+
+void AbstrRenderer::SetLavaPower(float val) {
+  if (m_lavaPower != val) {
+      m_lavaPower = val;
+      ScheduleCompleteRedraw();
+  }
+}
+
+void AbstrRenderer::SetLavaDensityMin(float val) {
+  if (m_lavaDensityMin != val) {
+      m_lavaDensityMin = val;
+      ScheduleCompleteRedraw();
+  }
+}
+
+void AbstrRenderer::SetLavaDensityMax(float val) {
+  if (m_lavaDensityMax != val) {
+      m_lavaDensityMax = val;
+      ScheduleCompleteRedraw();
+  }
+}
+
+void AbstrRenderer::SetLavaBrightness(float val) {
+  if (m_lavaBrightness != val) {
+      m_lavaBrightness = val;
+      ScheduleCompleteRedraw();
+  }
+}
+
+void AbstrRenderer::SetLavaContrast(float val) {
+  if (m_lavaContrast != val) {
+      m_lavaContrast = val;
+      ScheduleCompleteRedraw();
+  }
+}
+
 void AbstrRenderer::RegisterLuaFunctions(
     LuaClassRegistration<AbstrRenderer>& reg,
     AbstrRenderer* me,
@@ -2270,6 +2365,28 @@ void AbstrRenderer::RegisterLuaFunctions(
                     "enables a debug mode in which we write out brick md5sums",
                     true);
   ss->addParamInfo(id, 0, "boolean", "true to enable, false to disable");
+
+  //lava
+  id = reg.function(&AbstrRenderer::SetLavaIsoValue, "setLavaIsoValue",
+                    "", false);
+  id = reg.function(&AbstrRenderer::SetLavaIsoWalls, "setLavaIsoWalls",
+                    "", false);
+  id = reg.function(&AbstrRenderer::SetLavaIsoAlpha, "setLavaIsoAlpha",
+                    "", false);
+  id = reg.function(&AbstrRenderer::SetLavaIsoSmooth, "setLavaIsoSmooth",
+                    "", false);
+  id = reg.function(&AbstrRenderer::SetLavaIsoColor, "setLavaIsoColor",
+                    "", false);
+  id = reg.function(&AbstrRenderer::SetLavaPower, "setLavaIsoPower",
+                    "", false);
+  id = reg.function(&AbstrRenderer::SetLavaDensityMin, "setLavaDensityMin",
+                    "", false);
+  id = reg.function(&AbstrRenderer::SetLavaDensityMax, "setLavaDensityMax",
+                    "", false);
+  id = reg.function(&AbstrRenderer::SetLavaBrightness, "setLavaBrightness",
+                    "", false);
+  id = reg.function(&AbstrRenderer::SetLavaContrast, "setLavaContrast",
+                    "", false);
 
   /// Register renderer specific functions.
   me->RegisterDerivedClassLuaFunctions(reg, ss);

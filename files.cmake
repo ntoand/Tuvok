@@ -208,6 +208,7 @@ set( TUVOK_HEADERS  StdTuvokDefines.h
                     Renderer/GL/GLInclude.h
                     Renderer/GL/GLObject.h
                     Renderer/GL/GLRaycaster.h
+                    Renderer/GL/GLRaycasterLava.h
                     Renderer/GL/GLRenderer.h
                     Renderer/GL/GLSBVR2D.h
                     Renderer/GL/GLSBVR.h
@@ -504,6 +505,7 @@ set(TUVOK_SRCS 3rdParty/LUA/lapi.cpp
                Renderer/GL/GLGridLeaper.cpp
                Renderer/GL/GLHashTable.cpp
                Renderer/GL/GLRaycaster.cpp
+               Renderer/GL/GLRaycasterLava.cpp
                Renderer/GL/GLRenderer.cpp
                Renderer/GL/GLSBVR2D.cpp
                Renderer/GL/GLSBVR.cpp

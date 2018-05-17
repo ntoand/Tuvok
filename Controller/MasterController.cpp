@@ -46,6 +46,7 @@
 #include "../IO/AbstrConverter.h"
 #include "../Renderer/GPUMemMan/GPUMemMan.h"
 #include "../Renderer/GL/GLRaycaster.h"
+#include "../Renderer/GL/GLRaycasterLava.h"
 #include "../Renderer/GL/GLGridLeaper.h"
 #include "../Renderer/GL/GLSBVR.h"
 #include "../Renderer/GL/GLSBVR2D.h"
@@ -175,6 +176,14 @@ MasterController::RequestNewVolumeRenderer(EVolumeRendererType eRendererType,
     api = "OpenGL";
     method = "Raycaster";
     retval = new GLRaycaster(this,
+                             bUseOnlyPowerOfTwo,
+                             bDownSampleTo8Bits,
+                             bDisableBorder);
+    break;
+  case OPENGL_RAYCASTER_LAVA :
+    api = "OpenGL";
+    method = "Raycaster Lava";
+    retval = new GLRaycasterLava(this,
                              bUseOnlyPowerOfTwo,
                              bDownSampleTo8Bits,
                              bDisableBorder);

@@ -1,7 +1,7 @@
 set_property(GLOBAL PROPERTY USE_FOLDERS On)
 cmake_minimum_required(VERSION 2.8.3) 
 
-project(volumeview)
+project(uvfconvert)
 
 message("CMAKE_SYSTEM_PROCESSOR: ${CMAKE_SYSTEM_PROCESSOR}")
 
@@ -33,56 +33,40 @@ endif(NOT OPENGL_FOUND)
 #include_directories(${Tuvok_INCLUDE_DIRS})
 #message(${Tuvok_INCLUDE_DIRS})
 #message(${Tuvok_LIBRARY_DIRS})
-#include_directories(
-#	/home/toand/git/Tuvok
-#)
+set(TuvokIncludeDir /home/toand/git/Tuvok/build/include)
+include_directories(
+	${TuvokIncludeDir}
+	${TuvokIncludeDir}/Tuvok
+	${TuvokIncludeDir}/Tuvok/Basics
+	${TuvokIncludeDir}/Tuvok/Basics/3rdParty
+	${TuvokIncludeDir}/Tuvok/IO/exception
+)
 link_directories( 
-	/home/toand/git/Tuvok/build
+	/home/toand/git/Tuvok/build/lib
 )
 
 include_directories(
-	external/glfw-3.0.3/include/GLFW/
-	external/glm-0.9.4.0/
-	external/glew-1.9.0/include/
+	DebugOut
 	../
 	.
 )
 
 set(ALL_LIBS
 	${OPENGL_LIBRARY}
-	GLFW_303
-	GLEW_190
 	-lTuvokExpressions 
 	-lTuvok
 )
 
-add_definitions(
-	-DTW_STATIC
-	-DTW_NO_LIB_PRAGMA
-	-DTW_NO_DIRECT3D
-	-DGLEW_STATIC
-	-D_CRT_SECURE_NO_WARNINGS
-)
-
-# Compile external dependencies 
-add_subdirectory (external)
-
 
 # Main app
 SET( srcs 
-	GLUtils.cpp
-	Camera.cpp
-	Tuvok.cpp
+	DebugOut/HRConsoleOut.cpp
 	main.cpp 
 	)
 
 # Headers
 SET( headers
-	GLInclude.h
-	GLUtils.h
-	Camera.h
-	Tuvok.h
 )
 
-add_executable(volumeview ${srcs} ${headers})
-target_link_libraries(volumeview ${ALL_LIBS} )
+add_executable(uvfconvert ${srcs} ${headers})
+target_link_libraries(uvfconvert ${ALL_LIBS} )

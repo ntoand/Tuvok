@@ -86,6 +86,7 @@ public:
   enum EVolumeRendererType {
     OPENGL_SBVR = 0,
     OPENGL_RAYCASTER,
+    OPENGL_RAYCASTER_LAVA,
     DIRECTX_SBVR,
     DIRECTX_RAYCASTER,
     OPENGL_2DSBVR,

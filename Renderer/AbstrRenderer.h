@@ -143,6 +143,7 @@ class AbstrRenderer {
       RM_1DTRANS = 0,  /**< one dimensional transfer function */
       RM_2DTRANS,      /**< two dimensional transfer function */
       RM_ISOSURFACE,   /**< render isosurfaces                */
+      RM_1DTRANS_LAVA,
       RM_INVALID
     };
 
@@ -489,6 +490,20 @@ class AbstrRenderer {
     virtual void SetDebugView(uint32_t iDebugView);
     virtual uint32_t GetDebugViewCount() const;
     uint32_t GetDebugView() const;
+
+
+    // lava
+    virtual void SetLavaIsoValue(float val);
+    virtual void SetLavaIsoWalls(bool val);
+    virtual void SetLavaIsoAlpha(float val);
+    virtual void SetLavaIsoSmooth(float val);
+    virtual void SetLavaIsoColor(FLOATVECTOR3 val);
+    virtual void SetLavaDensity(float val);
+    virtual void SetLavaPower(float val);
+    virtual void SetLavaDensityMin(float val);
+    virtual void SetLavaDensityMax(float val);
+    virtual void SetLavaBrightness(float val);
+    virtual void SetLavaContrast(float val);
 
   private:
     // Functions in this section were made private due to the transition to Lua.
@@ -862,6 +877,20 @@ class AbstrRenderer {
     LuaClassInstance LuaGet2DTrans();
 
     bool m_bDebugBricks; /// write out md5sums of bricks.
+
+    // LAVA volume options
+    float m_lavaIsoValue;
+    bool m_lavaIsoWalls;
+    float m_lavaIsoAlpha;
+    float m_lavaIsoSmooth;
+    FLOATVECTOR3 m_lavaIsoColor;
+    float m_lavaDensity;
+    float m_lavaPower;
+    float m_lavaDensityMin;
+    float m_lavaDensityMax;
+    float m_lavaBrightness;
+    float m_lavaContrast;
+    
 
   private:
     float               m_fIsovalue;

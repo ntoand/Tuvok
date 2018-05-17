@@ -13,12 +13,6 @@ using std::endl;
 
 #include <glm/gtc/type_ptr.hpp>
 
-//Tuvok
-//#define GLFW_EXPOSE_NATIVE_X11
-//#define GLFW_EXPOSE_NATIVE_GLX
-//#include <glfw3native.h>
-
-
 GLFWwindow* window;
 string title;
 
@@ -90,7 +84,7 @@ static void window_size_callback(GLFWwindow* window, int width, int height) {
 	
 }
 
-void init_resources(bool zup = false)
+void init_resources(string uvf_filename, bool zup = false)
 {
     camera = new Camera();
     camera->SetPosition(glm::vec3(0, 0, 2));
@@ -99,12 +93,12 @@ void init_resources(bool zup = false)
     if(zup)
         camera->camera_up = glm::vec3(0, 0, 1);
     camera->SetViewport(0, 0, WIDTH, HEIGHT);
-    camera->SetClipping(1, 1000000);
-    camera->camera_scale = 0.01;
+    camera->SetClipping(0.1, 10000);
+    camera->camera_scale = 0.001;
     camera->Update();
 
 
-    tv = new Tuvok();
+    tv = new Tuvok(uvf_filename);
 }
 
 void free_resources()
@@ -144,8 +138,7 @@ void doMovement() {
     if(keys[GLFW_KEY_C]) {
         cout << "key C press" << endl;
         keys[GLFW_KEY_C] = false;
-        if(tv)
-            tv->capture();
+        
     }
     camera->Update();
 }
@@ -167,25 +160,8 @@ void mainLoop()
         doMovement();
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
-        //graphics
-        // Dark blue background
-        //glClearColor(1.0f,0.5f,0.5f,1.0f);
-        /*
-        float* MVP, *MV;
-        MVP = (float*)glm::value_ptr(camera->MVP);
-        MV = (float*)glm::value_ptr(camera->MV);
-        
-        float campos[3] = {camera->camera_position[0], camera->camera_position[1], camera->camera_position[2]};
-        
-        pointcloud->updateVisibility(MVP, campos, frame_width, frame_height);
-        pointcloud->draw(MV, MVP);
-        */
-        //float dir0 = camera->camera_look_at[0] - camera->camera_position[0];
-        //float dir1 = camera->camera_look_at[1] - camera->camera_position[1];
-        //float dir2 = camera->camera_look_at[2] - camera->camera_position[2];
 
-        //float campos[3] = {camera->camera_position[0], camera->camera_position[1], camera->camera_position[2]};
+        float campos[3] = {camera->camera_position[0], camera->camera_position[1], camera->camera_position[2]};
         //float camdir[3] = {dir0, dir1, dir2};
 
         //GLXContext ctx = glfwGetGLXContext(window);
@@ -194,7 +170,7 @@ void mainLoop()
         float* MV, *P;
         MV = (float*)glm::value_ptr(camera->MV);
         P = (float*)glm::value_ptr(camera->projection);
-        tv->render(MV, P);
+        tv->render(MV, P, MV, P, campos, false);
 
        
         glfwSwapBuffers(window);
@@ -223,7 +199,11 @@ void mainLoop()
 
 int main(int argc, char* argv[]) {
     
+    string filename = "data/foot_256.uvf";
     bool zup = false;
+    if(argc > 1) {
+        filename = argv[1];
+    }
     
 	// Initialise GLFW
 	if( !glfwInit() )
@@ -269,7 +249,7 @@ int main(int argc, char* argv[]) {
 
 	// init resources
     glfwGetFramebufferSize(window, &frame_width, &frame_height);
-	init_resources(zup);
+	init_resources(filename, zup);
 
 	// Enter the main loop
 	mainLoop();

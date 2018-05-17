@@ -1,6 +1,6 @@
 #include "GLUtils.h"
 
-#include "app/GLInclude.h"
+#include "GLInclude.h"
 
 #include <cstdio>
 #include <string>
