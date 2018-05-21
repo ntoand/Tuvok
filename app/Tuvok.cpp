@@ -37,7 +37,7 @@ void Tuvok::init(int width, int height) {
 	std::shared_ptr<LuaScripting> ss = Controller::Instance().LuaScript();
     mLuaAbstrRenderer = ss->cexecRet<LuaClassInstance>(
         "tuvok.renderer.new",
-        //MasterController::OPENGL_SBVR, false, false, false, false);
+        //MasterController::OPENGL_RAYCASTER, false, false, false, false);
         MasterController::OPENGL_RAYCASTER_LAVA, false, false, false, false);
 	mRenderer = mLuaAbstrRenderer.getRawPointer<AbstrRenderer>(ss);
 

@@ -87,6 +87,7 @@
 #include "VFFConverter.h"
 #include "VGStudioConverter.h"
 #include "VTKConverter.h"
+#include "XRWConverter.h"
 
 #include "Mesh.h"
 #include "AbstrGeoConverter.h"
@@ -180,6 +181,7 @@ IOManager::IOManager() :
   m_vpConverters.push_back(std::shared_ptr<AbstrConverter>(new AmiraConverter()));
   m_vpConverters.push_back(std::shared_ptr<AbstrConverter>(new MRCConverter()));
   m_vpConverters.push_back(std::shared_ptr<AbstrConverter>(new VTKConverter()));
+  m_vpConverters.push_back(std::shared_ptr<AbstrConverter>(new XRWConverter()));
   m_dsFactory->AddReader(shared_ptr<UVFDataset>(new UVFDataset()));
 }
 

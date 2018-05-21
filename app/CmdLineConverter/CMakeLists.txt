@@ -33,7 +33,7 @@ endif(NOT OPENGL_FOUND)
 #include_directories(${Tuvok_INCLUDE_DIRS})
 #message(${Tuvok_INCLUDE_DIRS})
 #message(${Tuvok_LIBRARY_DIRS})
-set(TuvokIncludeDir /home/toand/git/Tuvok/build/include)
+set(TuvokIncludeDir /home/toand/git)
 include_directories(
 	${TuvokIncludeDir}
 	${TuvokIncludeDir}/Tuvok
@@ -42,7 +42,7 @@ include_directories(
 	${TuvokIncludeDir}/Tuvok/IO/exception
 )
 link_directories( 
-	/home/toand/git/Tuvok/build/lib
+	/home/toand/git/Tuvok/build
 )
 
 include_directories(

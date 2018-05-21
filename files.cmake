@@ -95,6 +95,7 @@ set( TUVOK_HEADERS  StdTuvokDefines.h
                     IO/3rdParty/lzma/Types.h
                     IO/3rdParty/lz4/lz4.h
                     IO/3rdParty/lz4/lz4hc.h
+                    IO/3rdParty/xrw/libxrw.h
                     IO/const-brick-iterator.h
                     IO/AbstrConverter.h
                     IO/AmiraConverter.h
@@ -174,6 +175,7 @@ set( TUVOK_HEADERS  StdTuvokDefines.h
                     IO/VariantArray.h
                     IO/VFFConverter.h
                     IO/XML3DGeoConverter.h
+                    IO/XRWConverter.h
                     LuaScripting/LuaClassConstructor.h
                     LuaScripting/LuaClassInstance.h
                     LuaScripting/LuaClassRegistration.h
@@ -410,6 +412,7 @@ set(TUVOK_SRCS 3rdParty/LUA/lapi.cpp
                IO/3rdParty/lzma/LzmaEnc.c
                IO/3rdParty/lz4/lz4.c
                IO/3rdParty/lz4/lz4hc.c
+               IO/3rdParty/xrw/libxrw.cpp
                IO/const-brick-iterator.cpp
                IO/AbstrConverter.cpp
                IO/AmiraConverter.cpp
@@ -481,6 +484,7 @@ set(TUVOK_SRCS 3rdParty/LUA/lapi.cpp
                IO/VariantArray.cpp
                IO/VFFConverter.cpp
                IO/XML3DGeoConverter.cpp
+               IO/XRWConverter.cpp
                LuaScripting/LuaClassConstructor.cpp
                LuaScripting/LuaClassInstance.cpp
                LuaScripting/LuaClassRegistration.cpp
