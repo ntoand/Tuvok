@@ -70,6 +70,7 @@ add_subdirectory (external)
 
 # Main app
 SET( srcs 
+	cJSON.cpp
 	GLUtils.cpp
 	Camera.cpp
 	Tuvok.cpp
@@ -78,6 +79,7 @@ SET( srcs
 
 # Headers
 SET( headers
+	cJSON.h
 	GLInclude.h
 	GLUtils.h
 	Camera.h

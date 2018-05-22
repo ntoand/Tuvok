@@ -2377,7 +2377,9 @@ void AbstrRenderer::RegisterLuaFunctions(
                     "", false);
   id = reg.function(&AbstrRenderer::SetLavaIsoColor, "setLavaIsoColor",
                     "", false);
-  id = reg.function(&AbstrRenderer::SetLavaPower, "setLavaIsoPower",
+  id = reg.function(&AbstrRenderer::SetLavaDensity, "setLavaDensity",
+                    "", false);
+  id = reg.function(&AbstrRenderer::SetLavaPower, "setLavaPower",
                     "", false);
   id = reg.function(&AbstrRenderer::SetLavaDensityMin, "setLavaDensityMin",
                     "", false);

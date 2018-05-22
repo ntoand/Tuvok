@@ -32,9 +32,9 @@ public:
             delete tv;
     }
 
-    void initTuvok(string filename, bool stereo)
+    void initTuvok(string filename, bool stereo, string jsonfile)
     {
-        tv = new Tuvok(filename, stereo);
+        tv = new Tuvok(filename, stereo, jsonfile);
     }
 
     void setCamThreshold(const float val)

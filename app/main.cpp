@@ -84,7 +84,7 @@ static void window_size_callback(GLFWwindow* window, int width, int height) {
 	
 }
 
-void init_resources(string uvf_filename, bool zup = false)
+void init_resources(string uvf_filename, string jsonfile, bool zup = false)
 {
     camera = new Camera();
     camera->SetPosition(glm::vec3(0, 0, 2));
@@ -97,8 +97,9 @@ void init_resources(string uvf_filename, bool zup = false)
     camera->camera_scale = 0.001;
     camera->Update();
 
-
-    tv = new Tuvok(uvf_filename);
+    cout << "init_resources jsonfile: " << jsonfile << endl;
+    tv = new Tuvok(uvf_filename, false, jsonfile);
+    tv->printOption();
 }
 
 void free_resources()
@@ -200,9 +201,13 @@ void mainLoop()
 int main(int argc, char* argv[]) {
     
     string filename = "data/foot_256.uvf";
+    string jsonfile = "";
     bool zup = false;
     if(argc > 1) {
         filename = argv[1];
+    }
+    if(argc > 2) {
+        jsonfile = argv[2];
     }
     
 	// Initialise GLFW
@@ -249,7 +254,7 @@ int main(int argc, char* argv[]) {
 
 	// init resources
     glfwGetFramebufferSize(window, &frame_width, &frame_height);
-	init_resources(filename, zup);
+	init_resources(filename, jsonfile, zup);
 
 	// Enter the main loop
 	mainLoop();

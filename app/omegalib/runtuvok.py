@@ -4,7 +4,7 @@ tv = tuvokview.initialize()
 #infile = "data/b3_LK.uvf"
 infile = "data/foot_tiffs_2048_3.uvf"
 stereo = True
-tv.initTuvok(infile, stereo)
+tv.initTuvok(infile, stereo, "") #uvffile, stereo?, jsonfile: "" --> not use
 
 cam = getDefaultCamera()
 cam.setPosition(Vector3(0, -1, 2))
