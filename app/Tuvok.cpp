@@ -83,7 +83,6 @@ void Tuvok::init(int width, int height) {
     LuaClassInstance trans = ss->cexecRet<LuaClassInstance>(mLuaAbstrRenderer.fqName() + ".get1DTrans");
   	shared_ptr<vector<FLOATVECTOR4> > cdata = ss->cexecRet<shared_ptr<vector<FLOATVECTOR4> > >(
           													trans.fqName() + ".getColorData");
-
   	if(mColormap) {
   		vector<FLOATVECTOR4> colors = mColormap->getColors();
   		for(int i=0; i < colors.size(); i++) {
@@ -108,6 +107,25 @@ void Tuvok::swapEye() {
 	std::shared_ptr<LuaScripting> ss = Controller::Instance().LuaScript();
 	bool b = ss->cexecRet<bool>(mLuaAbstrRenderer.fqName() + ".getStereoEyeSwap");
 	ss->cexec(mLuaAbstrRenderer.fqName() + ".setStereoEyeSwap",!b);
+}
+
+void Tuvok::setAlphaFactor(float val) {
+	if(!mInitialized)
+		return;
+	mAlphaFactor = val;
+	std::shared_ptr<LuaScripting> ss = Controller::Instance().LuaScript();
+	LuaClassInstance trans = ss->cexecRet<LuaClassInstance>(mLuaAbstrRenderer.fqName() + ".get1DTrans");
+  	shared_ptr<vector<FLOATVECTOR4> > cdata = ss->cexecRet<shared_ptr<vector<FLOATVECTOR4> > >(
+          													trans.fqName() + ".getColorData");
+  	if(mColormap) {
+  		vector<FLOATVECTOR4> colors = mColormap->getColors();
+  		for(int i=0; i < colors.size(); i++) {
+  			(*cdata)[i] = colors[i];
+  			(*cdata)[i][3] = colors[i][3] / mAlphaFactor;
+  		}
+  		// perform update
+  		ss->cexec("tuvok.gpu.changed1DTrans", LuaClassInstance(), trans);
+  	}
 }
 
 void Tuvok::render(const float MVLeft[16], const float PLeft[16], 

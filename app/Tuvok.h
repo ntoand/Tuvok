@@ -101,7 +101,8 @@ public:
 	void setCamThreshold(float val) { mCamThreshold = val; }
 	bool isStereo() { return mStereo; }
 	void swapEye();
-	void setAlphaFactor(float val) { mAlphaFactor = val; }
+	void setAlphaFactor(float val);
+	float getAlphaFactor() { return mAlphaFactor; }
 
 	void printOption();
 

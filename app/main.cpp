@@ -130,11 +130,23 @@ void doMovement() {
         cout << "up: " << camera->camera_up[0] << ", " << camera->camera_up[1] << ", " << camera->camera_up[2] << endl;
         keys[GLFW_KEY_I] = false;
     }
-    if(keys[GLFW_KEY_T]) {
-        keys[GLFW_KEY_T] = false;
-    }
     if(keys[GLFW_KEY_N]) {
+        if(tv) {
+            float alphaFactor = tv->getAlphaFactor() - 5;
+            if(alphaFactor < 10)
+                alphaFactor = 10;
+            tv->setAlphaFactor(alphaFactor);
+        }
         keys[GLFW_KEY_N] = false;
+    }
+    if(keys[GLFW_KEY_M]) {
+        if(tv) {
+            float alphaFactor = tv->getAlphaFactor() + 5;
+            if(alphaFactor > 100)
+                alphaFactor = 100;
+            tv->setAlphaFactor(alphaFactor);
+        }
+        keys[GLFW_KEY_M] = false;
     }
     if(keys[GLFW_KEY_C]) {
         cout << "key C press" << endl;
